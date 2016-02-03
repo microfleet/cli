@@ -1,13 +1,14 @@
 {
   "name": "ms-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "cli to access microservices over amqp through command line",
   "main": "./lib/index.js",
   "bin": {
     "ms-cli": "./bin/ms-cli.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "./node_modules/.bin/babel -d ./lib ./src"
   },
   "repository": {
     "type": "git",
