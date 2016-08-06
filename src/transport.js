@@ -1,8 +1,8 @@
 const AMQPTransport = require('ms-amqp-transport');
 
-module.exports = function disposer(host, port) {
+module.exports = function disposer({ host, port, user, password }) {
   return AMQPTransport
-    .connect({ connection: { host, port } })
+    .connect({ connection: { host, port, user, password } })
     .timeout(10000)
     .disposer(amqp => amqp.close());
 };
