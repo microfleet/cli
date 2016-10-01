@@ -1,6 +1,6 @@
 {
   "name": "ms-cli",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "cli to access microservices over amqp through command line",
   "main": "./lib/index.js",
   "bin": {
@@ -25,20 +25,20 @@
   },
   "homepage": "https://github.com/makeomatic/ms-cli#readme",
   "dependencies": {
-    "bluebird": "3.4.1",
+    "bluebird": "^3.4.6",
     "bunyan": "1.8.1",
     "ms-amqp-transport": "4.0.0",
     "ms-validation": "^3.0.0",
     "stdout-stream": "^1.4.0",
-    "yargs": "4.8.1"
+    "yargs": "^6.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.11.4",
-    "babel-eslint": "^6.1.2",
+    "babel-cli": "^6.16.0",
+    "babel-eslint": "^7.0.0",
     "babel-plugin-transform-strict-mode": "^6.11.3",
-    "babel-register": "^6.11.6",
-    "eslint": "^3.2.2",
-    "eslint-config-airbnb-base": "^5.0.0",
-    "eslint-plugin-import": "^1.12.0"
+    "babel-register": "^6.16.3",
+    "eslint": "^3.7.0",
+    "eslint-config-airbnb-base": "^8.0.0",
+    "eslint-plugin-import": "^1.16.0"
   }
 }

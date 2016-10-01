@@ -5,7 +5,7 @@ const bunyan = require('bunyan');
 const log = bunyan.createLogger({ name: 'ms-cli' });
 
 const yargs = require('yargs')
-  .usage('Usage: $0 --q.offset=0 --q.limit=10 -p payments.transactions.common -h rabbitmq -p 5672')
+  .usage('Usage: $0 --q.offset=0 --q.limit=10 -r payments.transactions.common -h rabbitmq -p 5672')
 
   .alias('p', 'port')
   .describe('p', 'rabbitmq port')
@@ -37,9 +37,16 @@ const yargs = require('yargs')
 process.nextTick(() => {
   const argv = yargs.argv;
 
+  // parse to JSON
+  if (typeof argv.q === 'string') {
+    argv.q = JSON.parse(argv.q);
+  }
+
+  log.info('sending data %j', argv.q);
+
   // issue command
   Promise.using(getTransport(argv), amqp => (
-    amqp.publishAndWait(argv.route, argv.q, { timeout: argv.timeout }).then(response => {
+    amqp.publishAndWait(argv.route, argv.q, { timeout: argv.timeout }).then((response) => {
       log.info(response);
     })
   ));
