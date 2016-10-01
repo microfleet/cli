@@ -1,6 +1,6 @@
 {
   "name": "ms-cli",
-  "version": "2.1.0",
+  "version": "2.1.2",
   "description": "cli to access microservices over amqp through command line",
   "main": "./lib/index.js",
   "bin": {

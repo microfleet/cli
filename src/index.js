@@ -42,7 +42,7 @@ process.nextTick(() => {
     argv.q = JSON.parse(argv.q);
   }
 
-  log.info('sending data %j', argv.q);
+  log.info('sending data with %j', argv);
 
   // issue command
   Promise.using(getTransport(argv), amqp => (
