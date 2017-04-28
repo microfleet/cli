@@ -1,5 +1,7 @@
 # ms-cli
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/makeomatic/ms-cli.svg)](https://greenkeeper.io/)
+
 cli for running commands against microservices and printing the responses
 
 ```sh
