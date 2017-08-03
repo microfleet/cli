@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  rabbitmq:
+    image: makeomatic/rabbitmq:3.6.9
+    container_name: rabbitmq
+    hostname: rabbitmq
+
+  html-to-pdf:
+    image: microfleet/html-to-pdf:8.2.1-1.1.0
+    container_name: html-to-pdf
+    links:
+      - rabbitmq
+    volumes:
+      - ${PWD}/test/templates:/src/templates
+      - ${PWD}/test/configs:/configs
+      - ${PWD}/test/actions/ping.js:/src/lib/actions/ping.js
+      - ${PWD}/test/schemas/ping.json:/src/schemas/ping.json
+    environment:
+      NODE_ENV: production
+      NCONF_FILE_PATH: '["/configs"]'
+
+  tester:
+    image: makeomatic/node:8.2.1-tester
+    container_name: tester
+    working_dir: /src
+    volumes:
+      - ${PWD}:/src
+      - ${PWD}/test/configs:/configs
+    links:
+      - rabbitmq
+    depends_on:
+      - html-to-pdf
+    environment:
+      NODE_ENV: test
+      NCONF_FILE_PATH: '["/configs"]'
+    command: tail -f /dev/null

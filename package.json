@@ -1,44 +1,76 @@
 {
-  "name": "ms-cli",
-  "version": "2.1.2",
+  "name": "@microfleet/cli",
+  "version": "0.0.0-development",
   "description": "cli to access microservices over amqp through command line",
   "main": "./lib/index.js",
   "bin": {
-    "ms-cli": "./bin/ms-cli.js"
+    "mcli": "./bin/ms-cli.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "babel -d ./lib ./src"
+    "test": "npm run lint && npm run test:e2e",
+    "test:e2e": "mdep test run",
+    "lint": "eslint .",
+    "commit": "simple-commit-message",
+    "prepublishOnly": "babel -d ./lib ./src",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  },
+  "publisConfig": {
+    "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/makeomatic/ms-cli.git"
+    "url": "git+https://github.com/@microfleet/cli.git"
   },
   "keywords": [
     "microservice",
     "cli"
   ],
-  "author": "Vitaly Aminev <v@makeomatic.ru>",
+  "author": "Vitaly Aminev <v@makeomatic.ca>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/makeomatic/ms-cli/issues"
+    "url": "https://github.com/@microfleet/cli/issues"
   },
-  "homepage": "https://github.com/makeomatic/ms-cli#readme",
+  "homepage": "https://github.com/@microfleet/cli#readme",
   "dependencies": {
+    "@microfleet/transport-amqp": "^12.1.3",
     "bluebird": "^3.4.6",
-    "bunyan": "1.8.1",
-    "ms-amqp-transport": "4.0.0",
-    "ms-validation": "^3.0.0",
+    "bunyan": "^1.8.12",
+    "ms-conf": "^3.1.2",
     "stdout-stream": "^1.4.0",
-    "yargs": "^6.0.0"
+    "yargs": "^8.0.2"
   },
   "devDependencies": {
+    "@makeomatic/deploy": "^4.1.3",
     "babel-cli": "^6.16.0",
     "babel-eslint": "^7.0.0",
+    "babel-plugin-istanbul": "^4.1.4",
     "babel-plugin-transform-strict-mode": "^6.11.3",
     "babel-register": "^6.16.3",
-    "eslint": "^3.7.0",
-    "eslint-config-airbnb-base": "^8.0.0",
-    "eslint-plugin-import": "^1.16.0"
+    "codecov": "^2.2.0",
+    "cross-env": "^5.0.2",
+    "diff": "^3.3.0",
+    "eslint": "^4.3.0",
+    "eslint-config-makeomatic": "^1.0.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "mocha": "^3.5.0",
+    "nyc": "^11.1.0"
+  },
+  "release": {
+    "analyzeCommits": "simple-commit-message",
+    "generateNotes": "github-post-release",
+    "verifyConditions": "@makeomatic/condition-semaphore",
+    "getLastRelease": "@makeomatic/last-release-npm",
+    "branch": "master"
+  },
+  "config": {
+    "pre-git": {
+      "commit-msg": "simple",
+      "pre-commit": [],
+      "pre-push": [],
+      "post-commit": [],
+      "post-checkout": [],
+      "post-merge": []
+    }
   }
 }
