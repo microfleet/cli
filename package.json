@@ -14,7 +14,7 @@
     "prepublishOnly": "babel -d ./lib ./src",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
-  "publisConfig": {
+  "publishConfig": {
     "access": "public"
   },
   "repository": {
