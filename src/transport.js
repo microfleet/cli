@@ -1,8 +1,23 @@
-const AMQPTransport = require('ms-amqp-transport');
+const AMQPTransport = require('@microfleet/transport-amqp');
 
-module.exports = function disposer({ host, port, user, password }) {
+module.exports = function disposer({ host, port, login, password }) {
   return AMQPTransport
-    .connect({ connection: { host, port, login: user, password } })
+    .connect({
+      privateQueueOpts: {
+        exclusive: true,
+        durable: false,
+        arguments: {},
+      },
+      dlx: {
+        enabled: false,
+      },
+      connection: {
+        host,
+        port,
+        login,
+        password,
+      },
+    })
     .timeout(10000)
     .disposer(amqp => amqp.close());
 };

@@ -1,53 +1,79 @@
 const Promise = require('bluebird');
-const getTransport = require('./transport.js');
 const bunyan = require('bunyan');
+const conf = require('ms-conf');
+const getTransport = require('./transport.js');
 
-const log = bunyan.createLogger({ name: 'ms-cli' });
+// set default namespace
+process.env.NCONF_NAMESPACE = process.env.NCONF_NAMESPACE || 'MS_CLI';
 
-const yargs = require('yargs')
-  .usage('Usage: $0 --q.offset=0 --q.limit=10 -r payments.transactions.common -h rabbitmq -p 5672')
-
-  .alias('p', 'port')
-  .describe('p', 'rabbitmq port')
-  .default('p', 5672)
-
-  .alias('h', 'host')
-  .describe('h', 'rabbitmq host')
-  .default('h', 'localhost')
-
-  .alias('u', 'user')
-  .default('u', 'guest')
-  .describe('u', 'rabbitmq user')
-
-  .alias('P', 'password')
-  .default('P', 'guest')
-  .describe('P', 'rabbitmq password')
-
-  .alias('r', 'route')
-  .describe('r', 'rabbitmq routing key')
-  .demand('r')
-
-  .describe('q', 'query object')
-  .default('q', {})
-
-  .alias('t', 'timeout')
-  .describe('t', 'request timeout')
-  .default('t', 15000);
-
-process.nextTick(() => {
-  const argv = yargs.argv;
-
-  // parse to JSON
-  if (typeof argv.q === 'string') {
-    argv.q = JSON.parse(argv.q);
-  }
-
-  log.info('sending data with %j', argv);
-
-  // issue command
-  Promise.using(getTransport(argv), amqp => (
-    amqp.publishAndWait(argv.route, argv.q, { timeout: argv.timeout }).then((response) => {
-      log.info(response);
-    })
-  ));
+const config = conf.get('/amqp/transport/connection', { env: process.env.NODE_ENV });
+const log = bunyan.createLogger({
+  name: '@microfleet/cli',
+  level: conf.get('/debug') ? 'trace' : 'info',
+  stream: process.stderr,
 });
+log.trace({ config }, 'default amqp config');
+
+const argv = require('yargs')
+  .usage('Usage: $0 --q.offset=0 --q.limit=10 -r payments.transactions.common')
+  .option('port', {
+    alias: 'p',
+    describe: 'rabbitmq port',
+    default: 5672,
+  })
+  .option('host', {
+    alias: 'h',
+    describe: 'rabbitmq host',
+    default: 'localhost',
+  })
+  .option('login', {
+    alias: 'l',
+    default: 'guest',
+    describe: 'rabbitmq user',
+  })
+  .option('password', {
+    alias: 'P',
+    default: 'guest',
+    describe: 'rabbitmq password',
+  })
+  .option('route', {
+    alias: 'r',
+    describe: 'rabbitmq routing key',
+    demandOption: true,
+  })
+  .option('query', {
+    alias: 'q',
+    describe: 'query object',
+    default: {},
+  })
+  .option('timeout', {
+    alias: 't',
+    describe: 'request timeout',
+    default: 15000,
+  })
+  .config(config)
+  .help('help')
+  .argv;
+
+// parse to JSON
+if (typeof argv.q === 'string') {
+  argv.q = JSON.parse(argv.q);
+}
+
+log.trace('sending data with', argv);
+
+// issue command
+Promise.using(getTransport(argv), amqp => (
+  amqp
+    .publishAndWait(argv.route, argv.q, { timeout: argv.timeout })
+    .then((response) => {
+      // eslint-disable-next-line no-console
+      console.info(require('util').inspect(response));
+      return null;
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      return null;
+    })
+));
