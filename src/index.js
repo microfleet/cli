@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const bunyan = require('bunyan');
 const conf = require('ms-conf');
-const getTransport = require('./transport.js');
+const getTransport = require('./transport');
 
 // set default namespace
 process.env.NCONF_NAMESPACE = process.env.NCONF_NAMESPACE || 'MS_CLI';
