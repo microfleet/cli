@@ -24,7 +24,7 @@ to run commands against AMQP-enabled endpoints
 
 ```sh
 $ docker exec -it <@microfleet/container-name> sh
-$ npx @microfleet/cli -r pdf.render -q {"meta":false,"context":{},"template":"sample"}
+$ npx @microfleet/cli -r pdf.render -q '{"meta":false,"context":{},"template":"sample"}'
 ```
 
 Response will be printed to stdout/stderr based on success/failure of the request
