@@ -15,6 +15,7 @@ services:
       - ${PWD}/test/templates:/src/templates
       - ${PWD}/test/configs:/configs
       - ${PWD}/test/actions/ping.js:/src/lib/actions/ping.js
+      - ${PWD}/test/actions/json.js:/src/lib/actions/json.js
       - ${PWD}/test/schemas/ping.json:/src/schemas/ping.json
     environment:
       NODE_ENV: production

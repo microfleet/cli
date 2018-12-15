@@ -29,7 +29,14 @@ describe('ms-cli', () => {
   it('performs sample request', () => {
     return exec(['-r', 'pdf.ping']).then((lines) => {
       assert.equal(lines.length, 1);
-      assert.equal(lines[0], "'pong'");
+      assert.equal(lines[0], '"pong"');
+      return null;
+    });
+  });
+
+  it('prints complex object', () => {
+    return exec(['-r', 'pdf.json']).then((out) => {
+      assert(JSON.parse(out[0]));
       return null;
     });
   });
