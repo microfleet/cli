@@ -12,6 +12,7 @@ const log = bunyan.createLogger({
   level: conf.get('/debug') ? 'trace' : 'info',
   stream: process.stderr,
 });
+
 log.trace({ config }, 'default amqp config');
 
 const argv = require('yargs')
@@ -68,7 +69,7 @@ Promise.using(getTransport(argv), amqp => (
     .publishAndWait(argv.route, argv.q, { timeout: argv.timeout })
     .then((response) => {
       // eslint-disable-next-line no-console
-      console.info(require('util').inspect(response));
+      console.log('%j', response);
       return null;
     })
     .catch((err) => {
