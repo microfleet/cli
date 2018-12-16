@@ -72,5 +72,8 @@
       "post-checkout": [],
       "post-merge": []
     }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
   }
 }
