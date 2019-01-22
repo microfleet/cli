@@ -1,5 +1,6 @@
 const AMQPTransport = require('@microfleet/transport-amqp');
 
+// eslint-disable-next-line object-curly-newline
 module.exports = function disposer({ host, port, login, password }) {
   return AMQPTransport
     .connect({

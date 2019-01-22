@@ -7,7 +7,7 @@ services:
     hostname: rabbitmq
 
   html-to-pdf:
-    image: microfleet/html-to-pdf:8.2.1-1.1.0
+    image: microfleet/html-to-pdf
     container_name: html-to-pdf
     links:
       - rabbitmq
@@ -22,7 +22,7 @@ services:
       NCONF_FILE_PATH: '["/configs"]'
 
   tester:
-    image: makeomatic/node:8.2.1-tester
+    image: makeomatic/node
     container_name: tester
     working_dir: /src
     volumes:

@@ -1,69 +1,59 @@
-const Promise = require('bluebird');
 const assert = require('assert');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 const diff = require('diff');
-const spawn = require('child_process').execFile;
+const spawn = require('util').promisify(require('child_process').execFile);
 
 describe('ms-cli', () => {
   const binaryPath = path.resolve(__dirname, '../../bin/ms-cli.js');
 
-  function exec(args = []) {
-    return Promise.fromNode(next => (
-      spawn(binaryPath, [...args], {
-        timeout: 20000,
-        env: process.env,
-        cwd: process.cwd(),
-      }, (err, stdout, stderr) => {
-        if (err) {
-          return next(err);
-        }
+  async function exec(args = []) {
+    const { stdout, stderr } = await spawn(binaryPath, [...args], {
+      timeout: 20000,
+      env: process.env,
+      cwd: process.cwd(),
+    });
 
-        assert.equal(stderr, '');
-        const lines = stdout.split('\n');
-        return next(null, lines.slice(0, -1));
-      })
-    ));
+    assert.equal(stderr, '');
+    const lines = stdout.split('\n');
+    return lines.slice(0, -1);
   }
 
-  it('performs sample request', () => {
-    return exec(['-r', 'pdf.ping']).then((lines) => {
-      assert.equal(lines.length, 1);
-      assert.equal(lines[0], '"pong"');
-      return null;
-    });
+  it('performs sample request', async () => {
+    const lines = await exec(['-r', 'pdf.ping']);
+    assert.equal(lines.length, 1);
+    assert.equal(lines[0], '"pong"');
   });
 
-  it('prints complex object', () => {
-    return exec(['-r', 'pdf.json']).then((out) => {
-      assert(JSON.parse(out[0]));
-      return null;
-    });
+  it('prints complex object', async () => {
+    const [out] = await exec(['-r', 'pdf.json']);
+    assert(JSON.parse(out));
   });
 
-  it('performs pdf rendering request', () => {
+  it('performs pdf rendering request', async () => {
     const q = {
       template: 'sample',
       context: {},
       meta: false,
     };
 
-    const sample = fs.readFileSync(path.resolve(`${__dirname}/../sample.pdf`)).toString('base64');
+    const sample = await fs.readFile(path.resolve(`${__dirname}/../sample.pdf`), 'base64');
+    const lines = await exec(['-r', 'pdf.render', '-q', JSON.stringify(q)]);
 
-    return exec(['-r', 'pdf.render', '-q', JSON.stringify(q)])
-      .then((lines) => {
-        assert.equal(lines.length, 1);
+    assert.equal(lines.length, 1);
 
-        const generatedPDFInBase64 = lines[0].slice(1, -1);
-        const diffChars = diff.diffChars(generatedPDFInBase64, sample);
+    const generatedPDFInBase64 = lines[0].slice(1, -1);
+    const diffChars = diff.diffChars(generatedPDFInBase64, sample);
 
-        let chars = Math.abs(generatedPDFInBase64.length - sample.length);
-        diffChars.forEach((state) => {
-          if (state.removed) chars += state.count;
-        });
+    let chars = Math.abs(generatedPDFInBase64.length - sample.length);
+    diffChars.forEach((state) => {
+      if (state.removed) chars += state.count;
+    });
 
-        assert.ok(chars / sample.length < 0.003, 'generated files differ too much');
-        return null;
-      });
+    try {
+      assert.ok(chars / sample.length < 0.003, `generated files differ too much: ${chars} / ${sample.length}`);
+    } finally {
+      await fs.writeFile(path.resolve(`${__dirname}/../sample-fail.pdf`), generatedPDFInBase64, 'base64');
+    }
   });
 });

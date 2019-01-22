@@ -1,7 +1,6 @@
 const Promise = require('bluebird');
 const bunyan = require('bunyan');
 const conf = require('ms-conf');
-const getTransport = require('./transport');
 
 // set default namespace
 process.env.NCONF_NAMESPACE = process.env.NCONF_NAMESPACE || 'MS_CLI';
@@ -15,7 +14,7 @@ const log = bunyan.createLogger({
 
 log.trace({ config }, 'default amqp config');
 
-const argv = require('yargs')
+const { argv } = require('yargs')
   .usage('Usage: $0 --q.offset=0 --q.limit=10 -r payments.transactions.common')
   .option('port', {
     alias: 'p',
@@ -53,8 +52,7 @@ const argv = require('yargs')
     default: 15000,
   })
   .config(config)
-  .help('help')
-  .argv;
+  .help('help');
 
 // parse to JSON
 if (typeof argv.q === 'string') {
@@ -62,6 +60,7 @@ if (typeof argv.q === 'string') {
 }
 
 log.trace('sending data with', argv);
+const getTransport = require('./transport');
 
 // issue command
 Promise.using(getTransport(argv), amqp => (
@@ -69,7 +68,7 @@ Promise.using(getTransport(argv), amqp => (
     .publishAndWait(argv.route, argv.q, { timeout: argv.timeout })
     .then((response) => {
       // eslint-disable-next-line no-console
-      console.log('%j', response);
+      console.info('%j', response);
       return null;
     })
     .catch((err) => {
