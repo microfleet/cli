@@ -1,5 +1,6 @@
 exports.amqp = {
   transport: {
+    debug: false,
     connection: {
       host: 'rabbitmq',
       port: 5672,
@@ -11,7 +12,7 @@ exports.amqp = {
 
 exports.logger = {
   defaultLogger: true,
-  debug: true,
+  debug: false,
 };
 
 exports.debug = false;

@@ -1,38 +1,16 @@
-version: '2'
+version: '3'
 
 services:
-  rabbitmq:
-    image: makeomatic/rabbitmq:3.6.9
-    container_name: rabbitmq
-    hostname: rabbitmq
-
-  html-to-pdf:
-    image: microfleet/html-to-pdf
-    container_name: html-to-pdf
-    links:
+  ms-users:
+    image: makeomatic/ms-users:15.1.5
+    depends_on:
       - rabbitmq
+      - redis
+      - redis-sentinel
     volumes:
-      - ${PWD}/test/templates:/src/templates
       - ${PWD}/test/configs:/configs
-      - ${PWD}/test/actions/ping.js:/src/lib/actions/ping.js
-      - ${PWD}/test/actions/json.js:/src/lib/actions/json.js
-      - ${PWD}/test/schemas/ping.json:/src/schemas/ping.json
+      - ${PWD}/test/files/register-fake-users.js:/src/lib/actions/register-fake-users.js:ro
+      - ${PWD}/test/files/register-fake-users.json:/src/schemas/register-fake-users.json:ro
     environment:
       NODE_ENV: production
-      NCONF_FILE_PATH: '["/configs"]'
-
-  tester:
-    image: makeomatic/node
-    container_name: tester
-    working_dir: /src
-    volumes:
-      - ${PWD}:/src
-      - ${PWD}/test/configs:/configs
-    links:
-      - rabbitmq
-    depends_on:
-      - html-to-pdf
-    environment:
-      NODE_ENV: test
-      NCONF_FILE_PATH: '["/configs"]'
-    command: tail -f /dev/null
+      NCONF_FILE_PATH: '["/configs/config.cjs","/configs/redis.cjs"]'

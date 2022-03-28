@@ -1,0 +1,22 @@
+{
+  "node": 16,
+  "sleep": 10,
+  "auto_compose": true,
+  "with_local_compose": true,
+  "docker_compose": "./test/docker-compose.yml",
+  "services": ["rabbitmq","redisSentinel"],
+  "nycCoverage": false,
+  "nycReport": false,
+  "extras": {
+    "tester": {
+      "depends_on": ["ms-users"],
+      "volumes": ["${PWD}/test/configs:/configs"],
+      "environment": {
+        "NODE_ENV": "test",
+        "NCONF_FILE_PATH": "[\"/configs/config.cjs\"]"
+      }
+    }
+  },
+  "tests": "./test/suites/*.cjs",
+  "rebuild": ["ref-napi", "ffi-napi"]
+}
