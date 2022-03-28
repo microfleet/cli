@@ -1,6 +1,6 @@
 {
   "name": "@microfleet/cli",
-  "version": "0.0.0-development",
+  "version": "2.0.0",
   "description": "cli to access microservices over amqp through command line",
   "exports": {
     ".": {
