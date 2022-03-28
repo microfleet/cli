@@ -1,0 +1,7 @@
+test/
+node_modules/
+.npmrc
+coverage/
+.pnpm-store/
+.nyc_output/
+.husky/

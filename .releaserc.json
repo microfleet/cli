@@ -1,5 +1,22 @@
 {
-  "branch": "master",
+  "branches": [
+    { "name": "main" }
+  ],
+  "verifyConditions": [
+    "@semantic-release/changelog",
+    "@semantic-release/git",
+    "@semantic-release/github"
+  ],
+  "prepare": [
+    "@semantic-release/changelog",
+    "@semantic-release/npm",
+    { "path": "@semantic-release/exec", "cmd": "pnpm exec -- mdep docker release --no-in --tl" },
+    "@semantic-release/git"
+  ],
+  "publish": [
+    "@semantic-release/npm",
+    "@semantic-release/github"
+  ],
   "analyzeCommits": {
     "preset": "angular",
     "releaseRules": [

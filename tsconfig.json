@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "allowJs": false,
+    "target": "es2022",
+    "moduleResolution": "node",
+    "module": "es2022",
+    "importHelpers": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
+  },
+  "exclude": [
+    "**/node_modules/**"
+  ]
+}
